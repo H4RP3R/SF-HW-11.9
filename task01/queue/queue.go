@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"bytes"
 	"container/list"
 	"fmt"
 )
@@ -46,8 +47,25 @@ func (q *Queue[T]) Remove(el T) bool {
 	return false
 }
 
-func NewQueue[T comparable]() Queue[T] {
+func (q Queue[T]) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+	for e := q.storage.Front(); e != nil; e = e.Next() {
+		fmt.Fprintf(&buffer, "%v ", e.Value)
+	}
+	buffer.WriteString("\b]")
+	return buffer.String()
+}
+
+func NewQueue[T comparable](collection ...T) Queue[T] {
 	q := Queue[T]{}
 	q.storage = list.New()
+
+	if len(collection) != 0 {
+		for _, item := range collection {
+			q.Add(item)
+		}
+	}
+
 	return q
 }
